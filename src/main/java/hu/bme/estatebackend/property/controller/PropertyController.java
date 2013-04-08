@@ -1,7 +1,9 @@
 package hu.bme.estatebackend.property.controller;
 
 import hu.bme.estatebackend.property.form.Property;
+import hu.bme.estatebackend.property.form.User;
 import hu.bme.estatebackend.property.service.PropertyService;
+import hu.bme.estatebackend.property.service.UserService;
 
 import java.util.Map;
 
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class PropertyController {
 	@Autowired
 	private PropertyService propertyService;
+	@Autowired
+	private UserService userService;
 
 	/*
 	 * @RequestMapping("/") public String home(Map<String, Object> map) { return
@@ -62,6 +66,15 @@ public class PropertyController {
 
 		map.put("property", new Property());
 		map.put("propertyList", propertyService.jsonListProperty());
+
+		return "json";
+	}
+	
+	@RequestMapping("/users")
+	public String jsonUsers(Map<String, Object> map) {
+
+		map.put("user", new User());
+		map.put("propertyList", userService.jsonListUser());
 
 		return "json";
 	}
