@@ -21,6 +21,10 @@ public class Offer {
 	@Column(name = "DESCRIPTION")
 	private String description;
 
+	public Offer() {
+		super();
+	}
+
 	public Offer(Integer id, String name, String description) {
 		super();
 		this.id = id;

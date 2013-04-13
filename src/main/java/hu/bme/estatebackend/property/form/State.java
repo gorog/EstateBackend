@@ -21,6 +21,10 @@ public class State {
 	@Column(name = "DESCRIPTION")
 	private String description;
 
+	public State() {
+		super();
+	}
+
 	public State(Integer id, String name, String description) {
 		super();
 		this.id = id;

@@ -37,6 +37,12 @@ public class Notification {
 	@Column(name = "TIMESTAMP")
 	private Timestamp timestamp;
 
+	
+	
+	public Notification() {
+		super();
+	}
+
 	public Notification(Integer id, User user, Property property,
 			NotificationType type, String content, Timestamp timestamp) {
 		super();

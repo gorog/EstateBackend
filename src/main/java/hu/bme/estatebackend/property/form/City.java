@@ -25,9 +25,15 @@ public class City {
 
 	@ManyToOne
 	@JoinColumn(name = "COUNTY_ID")
-	private Country county;
+	private County county;
 
-	public City(Integer id, String name, String zipCode, Country county) {
+	
+	
+	public City() {
+		super();
+	}
+
+	public City(Integer id, String name, String zipCode, County county) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -59,11 +65,11 @@ public class City {
 		this.zipCode = zipCode;
 	}
 
-	public Country getCounty() {
+	public County getCounty() {
 		return county;
 	}
 
-	public void setCounty(Country county) {
+	public void setCounty(County county) {
 		this.county = county;
 	}
 

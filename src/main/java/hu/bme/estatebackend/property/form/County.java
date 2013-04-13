@@ -27,8 +27,13 @@ public class County {
 	@JoinColumn(name = "COUNTRY_ID")
 	private Country country;
 
-	@OneToMany(mappedBy = "county")
-	private Set<City> city;
+	/*
+	 * @OneToMany(mappedBy = "county") private Set<City> city;
+	 */
+
+	public County() {
+		super();
+	}
 
 	public County(Integer id, String name, Country country) {
 		super();
@@ -60,13 +65,9 @@ public class County {
 	public void setCountry(Country country) {
 		this.country = country;
 	}
-
-	public Set<City> getCity() {
-		return city;
-	}
-
-	public void setCity(Set<City> city) {
-		this.city = city;
-	}
-
+	/*
+	 * public Set<City> getCity() { return city; }
+	 * 
+	 * public void setCity(Set<City> city) { this.city = city; }
+	 */
 }

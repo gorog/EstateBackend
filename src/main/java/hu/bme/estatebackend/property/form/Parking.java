@@ -21,6 +21,11 @@ public class Parking {
 	@Column(name = "DESCRIPTION")
 	private String description;
 
+	public Parking() {
+		super();
+
+	}
+
 	public Parking(Integer id, String name, String description) {
 		super();
 		this.id = id;

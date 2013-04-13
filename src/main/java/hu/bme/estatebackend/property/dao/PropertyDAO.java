@@ -10,4 +10,6 @@ public interface PropertyDAO {
 	public List<Property> listProperty();
 
 	public void removeProperty(Integer id);
+
+	public Property getProperty(long propertyId);
 }

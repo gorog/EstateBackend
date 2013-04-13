@@ -43,6 +43,10 @@ public class Comment {
 	@OneToMany(mappedBy = "commentId")
 	private Set<Comment> comments = new HashSet<Comment>();
 
+	public Comment() {
+		super();
+	}
+
 	public Comment(Integer id, User user, Property property, String comment,
 			Timestamp timestamp, Comment commentId) {
 		super();

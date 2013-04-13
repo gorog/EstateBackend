@@ -10,8 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "FAVOURITES")
-public class Favourites {
+@Table(name = "FAVORITES")
+public class Favorites {
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,7 +25,11 @@ public class Favourites {
 	@JoinColumn(name = "PROPERTY_ID")
 	private Property property;
 
-	public Favourites(Integer id, User user, Property property) {
+	public Favorites() {
+		super();
+	}
+
+	public Favorites(Integer id, User user, Property property) {
 		super();
 		this.id = id;
 		this.user = user;

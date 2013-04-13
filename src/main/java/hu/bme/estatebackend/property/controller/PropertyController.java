@@ -69,12 +69,22 @@ public class PropertyController {
 
 		return "json";
 	}
-	
+
 	@RequestMapping("/users")
 	public String jsonUsers(Map<String, Object> map) {
 
 		map.put("user", new User());
 		map.put("propertyList", userService.jsonListUser());
+
+		return "json";
+	}
+
+	// Final
+	@RequestMapping("/v1/properties/{propertyId}")
+	public String selectProperty(@PathVariable long propertyId,
+			Map<String, Object> map) {
+
+		map.put("data", propertyService.getPropertyJson(propertyId));
 
 		return "json";
 	}

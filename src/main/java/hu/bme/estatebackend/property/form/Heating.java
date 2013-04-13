@@ -21,6 +21,10 @@ public class Heating {
 	@Column(name = "DESCRIPTION")
 	private String description;
 
+	public Heating() {
+		super();
+	}
+
 	public Heating(Integer id, String name, String description) {
 		super();
 		this.id = id;

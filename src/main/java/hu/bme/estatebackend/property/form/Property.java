@@ -81,9 +81,8 @@ public class Property {
 	@JoinColumn(name = "HEATING_ID")
 	private Heating heating;
 
-	@ManyToOne
-	@JoinColumn(name = "COMFORT_ID")
-	private Comfort comfort;
+	@JoinColumn(name = "ELEVATOR")
+	private boolean elevator;
 
 	@ManyToOne
 	@JoinColumn(name = "PARKING_ID")
@@ -103,7 +102,7 @@ public class Property {
 			City city, String street, String house_number, String floor,
 			String room, Integer longitude, Integer latitude, Offer offer,
 			Type type, Float price, Float rent, Float place, State state,
-			String rooms, Heating heating, Comfort comfort, Parking parking,
+			String rooms, Heating heating, boolean elevator, Parking parking,
 			String comment, Timestamp timestamp) {
 		super();
 		this.id = id;
@@ -125,7 +124,7 @@ public class Property {
 		this.state = state;
 		this.rooms = rooms;
 		this.heating = heating;
-		this.comfort = comfort;
+		this.elevator = elevator;
 		this.parking = parking;
 		this.comment = comment;
 		this.timestamp = timestamp;
@@ -283,12 +282,12 @@ public class Property {
 		this.heating = heating;
 	}
 
-	public Comfort getComfort() {
-		return comfort;
+	public boolean isElevator() {
+		return elevator;
 	}
 
-	public void setComfort(Comfort comfort) {
-		this.comfort = comfort;
+	public void setElevator(boolean elevator) {
+		this.elevator = elevator;
 	}
 
 	public Parking getParking() {

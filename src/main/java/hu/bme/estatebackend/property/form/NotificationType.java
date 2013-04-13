@@ -21,6 +21,10 @@ public class NotificationType {
 	@Column(name = "DESCRIPTION")
 	private String description;
 
+	public NotificationType() {
+		super();
+	}
+
 	public NotificationType(Integer id, String name, String description) {
 		super();
 		this.id = id;

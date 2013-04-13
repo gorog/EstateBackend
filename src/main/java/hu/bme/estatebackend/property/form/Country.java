@@ -24,8 +24,15 @@ public class Country {
 	@Column(name = "NAME")
 	private String name;
 
+	/*
 	@OneToMany(mappedBy = "country")
 	private Set<County> countys;
+
+	*/
+	
+	public Country() {
+		super();
+	}
 
 	public Country(Integer id, String short_name, String name) {
 		super();
@@ -57,7 +64,7 @@ public class Country {
 	public void setName(String name) {
 		this.name = name;
 	}
-
+/*
 	public Set<County> getCountys() {
 		return countys;
 	}
@@ -65,5 +72,5 @@ public class Country {
 	public void setCountys(Set<County> county) {
 		this.countys = county;
 	}
-
+*/
 }

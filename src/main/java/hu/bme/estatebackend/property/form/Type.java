@@ -21,6 +21,10 @@ public class Type {
 	@Column(name = "DESCRIPTION")
 	private String description;
 
+	public Type() {
+		super();
+	}
+
 	public Type(Integer id, String name, String description) {
 		super();
 		this.id = id;

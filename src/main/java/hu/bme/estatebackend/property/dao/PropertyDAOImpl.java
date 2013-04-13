@@ -32,4 +32,12 @@ public class PropertyDAOImpl implements PropertyDAO {
 
 	}
 
+	public Property getProperty(long propertyId) {
+		return (Property) sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"from Property where id = "
+								+ String.valueOf(propertyId)).uniqueResult();
+	}
+
 }

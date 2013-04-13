@@ -6,7 +6,12 @@ import java.util.List;
 
 public interface PropertyService {
 	public void addProperty(Property contact);
-    public List<Property> listProperty();
-    public void removeProperty(Integer id);
-    public String jsonListProperty();
+
+	public List<Property> listProperty();
+
+	public void removeProperty(Integer id);
+
+	public String jsonListProperty();
+
+	public String getPropertyJson(long propertyId);
 }

@@ -33,10 +33,18 @@ public class PropertyServiceImpl implements PropertyService {
 	}
 
 	@Transactional
-	public String jsonListProperty(){
+	public String jsonListProperty() {
 		Gson gson = new Gson();
-		
+
 		String json = gson.toJson(propertyDAO.listProperty());
 		return json;
-		}
+	}
+
+	@Transactional
+	public String getPropertyJson(long propertyId) {
+		Gson gson = new Gson();
+
+		String json = gson.toJson(propertyDAO.getProperty(propertyId));
+		return json;
+	}
 }
