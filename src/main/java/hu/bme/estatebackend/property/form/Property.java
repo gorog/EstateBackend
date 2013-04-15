@@ -1,5 +1,7 @@
 package hu.bme.estatebackend.property.form;
 
+import hu.bme.gson.MyExclusionStrategy.Serialize;
+
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
@@ -14,83 +16,107 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "PROPERTY")
 public class Property {
+	
+	@Serialize
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "USER_ID")
 	private User user;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "COUNTRY_ID")
 	private Country country;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "COUNTY_ID")
 	private County county;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "CITY_ID")
 	private City city;
 
+	@Serialize
 	@Column(name = "STREET")
 	private String street;
 
+	@Serialize
 	@Column(name = "HOUSE_NUMBER")
 	private String house_number;
 
+	@Serialize
 	@Column(name = "FLOOR")
 	private String floor;
 
+	@Serialize
 	@Column(name = "ROOM")
 	private String room;
 
+	@Serialize
 	@Column(name = "LONGITUDE")
 	private Integer longitude;
 
+	@Serialize
 	@Column(name = "LATITUDE")
 	private Integer latitude;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "OFFER_ID")
 	private Offer offer;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "TYPE_ID")
 	private Type type;
 
+	@Serialize
 	@Column(name = "PRICE")
 	private Float price;
 
+	@Serialize
 	@Column(name = "RENT")
 	private Float rent;
 
+	@Serialize
 	@Column(name = "PLACE")
 	private Float place;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "STATE_ID")
 	private State state;
 
+	@Serialize
 	@Column(name = "ROOMS_NUMBER")
 	private String rooms;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "HEATING_ID")
 	private Heating heating;
 
-	@JoinColumn(name = "ELEVATOR")
+	@Serialize
+	@Column(name = "ELEVATOR")
 	private boolean elevator;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "PARKING_ID")
 	private Parking parking;
 
+	@Serialize
 	@Column(name = "COMMENT")
 	private String comment;
 
+	@Serialize
 	@Column(name = "TIMESTAMP")
 	private Timestamp timestamp;
 

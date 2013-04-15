@@ -1,5 +1,7 @@
 package hu.bme.estatebackend.property.form;
 
+import hu.bme.gson.MyExclusionStrategy.Serialize;
+
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
@@ -14,6 +16,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "NOTIFICATION")
 public class Notification {
+	
+	@Serialize
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,18 +31,19 @@ public class Notification {
 	@JoinColumn(name = "PROPERTY_ID")
 	private Property property;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "TYPE_ID")
 	private NotificationType type;
 
+	@Serialize
 	@Column(name = "CONTENT")
 	private String content;
 
+	@Serialize
 	@Column(name = "TIMESTAMP")
 	private Timestamp timestamp;
 
-	
-	
 	public Notification() {
 		super();
 	}

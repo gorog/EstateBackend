@@ -1,5 +1,7 @@
 package hu.bme.estatebackend.property.form;
 
+import hu.bme.gson.MyExclusionStrategy.Serialize;
+
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -13,26 +15,33 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "USER")
 public class User {
+	
+	@Serialize
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
+	@Serialize
 	@Column(name = "USERNAME")
 	private String username;
 
 	@Column(name = "PASSWORD")
 	private String password;
 
+	@Serialize
 	@Column(name = "NAME")
 	private String name;
 
+	@Serialize
 	@Column(name = "Profession")
 	private String profession;
 
+	@Serialize
 	@Column(name = "PHONE")
 	private String phone;
 
+	@Serialize
 	@Column(name = "EMAIL")
 	private String email;
 

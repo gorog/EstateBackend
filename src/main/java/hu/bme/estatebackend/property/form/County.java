@@ -1,5 +1,7 @@
 package hu.bme.estatebackend.property.form;
 
+import hu.bme.gson.MyExclusionStrategy.Serialize;
+
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -15,21 +17,23 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "COUNTY")
 public class County {
+	@Serialize
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
+	@Serialize
 	@Column(name = "NAME")
 	private String name;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "COUNTRY_ID")
 	private Country country;
 
-	/*
-	 * @OneToMany(mappedBy = "county") private Set<City> city;
-	 */
+	@OneToMany(mappedBy = "county")
+	private Set<City> city;
 
 	public County() {
 		super();
@@ -65,9 +69,13 @@ public class County {
 	public void setCountry(Country country) {
 		this.country = country;
 	}
-	/*
-	 * public Set<City> getCity() { return city; }
-	 * 
-	 * public void setCity(Set<City> city) { this.city = city; }
-	 */
+
+	public Set<City> getCity() {
+		return city;
+	}
+
+	public void setCity(Set<City> city) {
+		this.city = city;
+	}
+
 }

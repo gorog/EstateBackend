@@ -1,5 +1,7 @@
 package hu.bme.estatebackend.property.form;
 
+import hu.bme.gson.MyExclusionStrategy.Serialize;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,15 +14,18 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "FAVORITES")
 public class Favorites {
+	@Serialize
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "USER_ID")
 	private User user;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "PROPERTY_ID")
 	private Property property;

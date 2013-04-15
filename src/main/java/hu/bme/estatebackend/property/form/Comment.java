@@ -1,5 +1,7 @@
 package hu.bme.estatebackend.property.form;
 
+import hu.bme.gson.MyExclusionStrategy.Serialize;
+
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,25 +19,32 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "COMMENT")
 public class Comment {
+	
+	@Serialize
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "USER")
 	private User user;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "PROPERTY")
 	private Property property;
 
+	@Serialize
 	@Column(name = "COMMENT")
 	private String comment;
 
+	@Serialize
 	@Column(name = "TIMESTAMP")
 	private Timestamp timestamp;
 
+	@Serialize
 	@ManyToOne
 	@JoinColumn(name = "COMMENT_ID")
 	private Comment commentId;
