@@ -47,10 +47,12 @@ public class PropertyDAOImpl implements PropertyDAO {
 	public List<Property> listProperty(String county, String city,
 			String heating, String offer, String parking, String state,
 			String type, String user, String price, String rent, int elevator,
-			String timestamp) {
+			String timestamp, int offset) {
 
 		String delimiter = ",";
-		String selectQuery = "from Property p, County cn, City c, Heating h, Offer o, Parking pa, State s, Type t, User u where p.county = cn AND p.city = c AND p.heating = h AND p.offer = o AND p.parking = pa AND p.state = s AND p.type = t AND p.user = u AND elevator IN (:elevators)";
+		//String selectQuery = "select p from Property p, County cn, City c, Heating h, Offer o, Parking pa, State s, Type t, User u where (p.county = cn OR p.county is null) AND (p.city = c OR p.city is null) AND p.heating = h AND p.offer = o AND p.parking = pa AND p.state = s AND p.type = t AND p.user = u AND elevator IN (:elevators)";
+		//(p.county = cn OR p.county is null) AND (p.city = c OR p.city is null) AND p.heating = h AND p.offer = o AND p.parking = pa AND p.state = s AND p.type = t AND p.user = u AND
+		String selectQuery = "select p from Property p LEFT JOIN p.county cn LEFT JOIN p.city c LEFT JOIN p.heating h LEFT JOIN p.offer o LEFT JOIN p.parking pa LEFT JOIN p.state s LEFT JOIN p.type t LEFT JOIN p.user u where  elevator IN (:elevators)";
 		List<String> countys = new ArrayList<String>();
 		List<String> cities = new ArrayList<String>();
 		List<String> heatings = new ArrayList<String>();
@@ -99,32 +101,30 @@ public class PropertyDAOImpl implements PropertyDAO {
 
 		if (!price.isEmpty()) {
 			if (price.matches("min: [\\d]* max: [\\d]*")) {
-				String temp[]=price.split(" ");
-				minPrice=Float.valueOf(temp[1]);
-				maxPrice=Float.valueOf(temp[3]);
-			}else if (price.matches("min: [\\d]*")) {
-				String temp[]=price.split(" ");
-				minPrice=Float.valueOf(temp[1]);
-			}
-			else if (price.matches("max: [\\d]*")) {
-				String temp[]=price.split(" ");
-				maxPrice=Float.valueOf(temp[1]);
+				String temp[] = price.split(" ");
+				minPrice = Float.valueOf(temp[1]);
+				maxPrice = Float.valueOf(temp[3]);
+			} else if (price.matches("min: [\\d]*")) {
+				String temp[] = price.split(" ");
+				minPrice = Float.valueOf(temp[1]);
+			} else if (price.matches("max: [\\d]*")) {
+				String temp[] = price.split(" ");
+				maxPrice = Float.valueOf(temp[1]);
 			}
 			selectQuery += " AND price >= (:minPrice) AND price <= (:maxPrice)";
 		}
-		
+
 		if (!rent.isEmpty()) {
 			if (rent.matches("min: [\\d]* max: [\\d]*")) {
-				String temp[]=rent.split(" ");
-				minRent=Float.valueOf(temp[1]);
-				maxRent=Float.valueOf(temp[3]);
-			}else if (rent.matches("min: [\\d]*")) {
-				String temp[]=price.split(" ");
-				minRent=Float.valueOf(temp[1]);
-			}
-			else if (rent.matches("max: [\\d]*")) {
-				String temp[]=price.split(" ");
-				maxRent=Float.valueOf(temp[1]);
+				String temp[] = rent.split(" ");
+				minRent = Float.valueOf(temp[1]);
+				maxRent = Float.valueOf(temp[3]);
+			} else if (rent.matches("min: [\\d]*")) {
+				String temp[] = price.split(" ");
+				minRent = Float.valueOf(temp[1]);
+			} else if (rent.matches("max: [\\d]*")) {
+				String temp[] = price.split(" ");
+				maxRent = Float.valueOf(temp[1]);
 			}
 			selectQuery += " AND price >= (:minRent) AND price <= (:maxRent)";
 		}
@@ -139,6 +139,8 @@ public class PropertyDAOImpl implements PropertyDAO {
 			elevators.add(1);
 		}
 
+		selectQuery += "ORDER BY p.timestamp DESC";
+		
 		Query query = sessionFactory.getCurrentSession()
 				.createQuery(selectQuery)
 				.setParameterList("elevators", elevators);
@@ -168,19 +170,23 @@ public class PropertyDAOImpl implements PropertyDAO {
 			query = query.setString("user", user);
 		}
 		if (!price.isEmpty()) {
-			query = query.setFloat("minPrice", minPrice).setFloat("maxPrice", maxPrice);
+			query = query.setFloat("minPrice", minPrice).setFloat("maxPrice",
+					maxPrice);
 		}
 		if (!rent.isEmpty()) {
-			query = query.setFloat("minRent", minRent).setFloat("maxRent", maxRent);
+			query = query.setFloat("minRent", minRent).setFloat("maxRent",
+					maxRent);
 		}
 		if (!timestamp.isEmpty()) {
 			try {
-				query = query.setDate("timestamp", new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE).parse(timestamp));
+				query = query.setDate("timestamp", new SimpleDateFormat(
+						"yyyy-MM-dd", Locale.FRANCE).parse(timestamp));
 			} catch (ParseException e) {
 			}
 		}
 
-		List<Property> result = query.list();
+		List<Property> result = (List<Property>) query.setFirstResult(offset).setMaxResults(12).list();
+		System.out.println(result.get(5));
 
 		return result;
 	}

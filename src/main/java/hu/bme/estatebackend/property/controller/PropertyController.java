@@ -86,11 +86,12 @@ public class PropertyController {
 			@RequestParam(value = "rent", required = false, defaultValue = "") String rent,
 			@RequestParam(value = "elevator", required = false, defaultValue = "3") int elevator,
 			@RequestParam(value = "timestamp", required = false, defaultValue = "") String timestamp,
+			@RequestParam(value = "offset", required = false, defaultValue = "0") int offset,
 			Map<String, Object> map) {
 
 		map.put("data", propertyService.listPropertyJson(county, city, heating,
 				offer, parking, state, type, user, price, rent, elevator,
-				timestamp));
+				timestamp, offset));
 
 		return "json";
 	}

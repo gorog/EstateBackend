@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "PROPERTY")
 public class Property {
-	
+
 	@Serialize
 	@Id
 	@Column(name = "ID")
@@ -30,17 +30,17 @@ public class Property {
 
 	@Serialize
 	@ManyToOne
-	@JoinColumn(name = "COUNTRY_ID")
+	@JoinColumn(name = "COUNTRY_ID", nullable = true)
 	private Country country;
 
 	@Serialize
 	@ManyToOne
-	@JoinColumn(name = "COUNTY_ID")
+	@JoinColumn(name = "COUNTY_ID", nullable = true)
 	private County county;
 
 	@Serialize
 	@ManyToOne
-	@JoinColumn(name = "CITY_ID")
+	@JoinColumn(name = "CITY_ID", nullable = true)
 	private City city;
 
 	@Serialize
@@ -338,6 +338,32 @@ public class Property {
 
 	public void setTimestamp(Timestamp timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	public String toString() {
+		String countyName = "null";
+		String cityName = "null";
+		if (county != null) {
+			countyName = county.getName();
+		}
+		if (city != null) {
+			cityName = city.getName();
+		}
+		return ("{ \"id\":" + id + ", \"user\": \"" + user.getUsername()
+				+ "\", \"country\": \"" + country.getName()
+				+ "\", \"county\": \"" + countyName + "\", \"city\": \""
+				+ cityName + "\", \"street\": \"" + street
+				+ "\", \"house_number\": \"" + house_number
+				+ "\", \"floor\": \"" + floor + "\", \"room\": \"" + room
+				+ "\", \"longitude\": " + longitude + ", \"latitude\": "
+				+ latitude + ", \"offer\": \"" + offer.getType()
+				+ "\", \"type\": \"" + type.getName() + "\", \"price\": "
+				+ price + ", \"rent\": " + rent + ", \"place\": " + place
+				+ ", \"state\": \"" + state.getName() + "\", \"rooms\": \""
+				+ rooms + "\", \"heating\": \"" + heating.getName()
+				+ "\", \"elevator\": " + elevator + ", \"parking\": \""
+				+ parking.getName() + "\", \"comment\": \"" + comment
+				+ "\", \"timestamp\": \"" + timestamp + "\" }");
 	}
 
 }

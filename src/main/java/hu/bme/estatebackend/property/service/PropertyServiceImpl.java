@@ -4,7 +4,9 @@ import hu.bme.estatebackend.property.dao.PropertyDAO;
 import hu.bme.estatebackend.property.form.Property;
 import hu.bme.gson.MyExclusionStrategy;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,14 +60,17 @@ public class PropertyServiceImpl implements PropertyService {
 	public String listPropertyJson(String county, String city, String heating,
 			String offer, String parking, String state, String type,
 			String user, String price, String rent, int elevator,
-			String timestamp) {
+			String timestamp, int offset) {
 
-		Gson gson = new GsonBuilder()
-				.setExclusionStrategies(new MyExclusionStrategy(null))
-				.serializeNulls().create();
-
-		String json = gson.toJson(propertyDAO.listProperty(county,city,heating,offer,parking,state,type,user,price,rent,elevator,timestamp));
-		return json;
+		List<Property> list = propertyDAO.listProperty(county, city, heating,
+				offer, parking, state, type, user, price, rent, elevator,
+				timestamp, offset);
+		String returnvalue = "[";
+		for (Property p : list) {
+			returnvalue = returnvalue.concat(p.toString() + ", ");
+		}
+		returnvalue = returnvalue.substring(0, returnvalue.length() - 2);
+		returnvalue = returnvalue.concat("]");
+		return returnvalue;
 	}
-
 }
