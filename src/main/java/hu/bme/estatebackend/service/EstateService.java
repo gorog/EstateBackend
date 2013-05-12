@@ -103,4 +103,6 @@ public interface EstateService {
 	public String getCommentJson(long id);
 
 	public String listCommentJson(long propertyId);
+	
+	public String getPicture(long id);
 }

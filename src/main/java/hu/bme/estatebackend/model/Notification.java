@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "NOTIFICATION")
 public class Notification {
-	
+
 	@Serialize
 	@Id
 	@Column(name = "ID")
@@ -43,6 +43,10 @@ public class Notification {
 	@Serialize
 	@Column(name = "TIMESTAMP")
 	private Timestamp timestamp;
+
+	@Serialize
+	@Column(name = "ISREAD")
+	private boolean isread;
 
 	public Notification() {
 		super();
@@ -107,4 +111,19 @@ public class Notification {
 		this.timestamp = timestamp;
 	}
 
+	public boolean isIsread() {
+		return isread;
+	}
+
+	public void setIsread(boolean isread) {
+		this.isread = isread;
+	}
+
+	public String toString() {
+		return ("{ \"id\":" + id + ", \"user\": \"" + user.getUsername()
+				+ "\", \"property\": " + property.getId() + ", \"type\": "
+				+ type.getId() + ", \"content\": \"" + content
+				+ "\", \"timestamp\": \"" + timestamp + "\", \"isread\": "
+				+ isread + " }");
+	}
 }

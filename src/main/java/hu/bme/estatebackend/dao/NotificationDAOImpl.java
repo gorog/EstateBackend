@@ -22,7 +22,7 @@ public class NotificationDAOImpl implements NotificationDAO {
 		return sessionFactory
 				.getCurrentSession()
 				.createQuery(
-						"select n from Notification n Left Join n.user u where u.username = ? ")
+						"select n from Notification n Left Join n.user u where u.username = ?")
 				.setString(0, userName).list();
 	}
 

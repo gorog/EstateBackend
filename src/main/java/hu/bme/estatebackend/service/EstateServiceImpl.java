@@ -9,6 +9,7 @@ import hu.bme.estatebackend.dao.NotificationDAO;
 import hu.bme.estatebackend.dao.NotificationTypeDAO;
 import hu.bme.estatebackend.dao.OfferDAO;
 import hu.bme.estatebackend.dao.ParkingDAO;
+import hu.bme.estatebackend.dao.PictureDAO;
 import hu.bme.estatebackend.dao.PropertyDAO;
 import hu.bme.estatebackend.dao.StateDAO;
 import hu.bme.estatebackend.dao.TypeDAO;
@@ -66,6 +67,8 @@ public class EstateServiceImpl implements EstateService {
 	private UserDAO userDAO;
 	@Autowired
 	private CommentDAO commentDAO;
+	@Autowired
+	private PictureDAO pictureDAO;
 
 	@Transactional
 	public void addProperty(Property property) {
@@ -205,12 +208,17 @@ public class EstateServiceImpl implements EstateService {
 
 	@Transactional
 	public String listNotificationJson(String userName) {
-		Gson gson = new GsonBuilder()
-				.setExclusionStrategies(new MyExclusionStrategy(null))
-				.serializeNulls().create();
+		List<Notification> list = notificationDAO.listNotification(userName);
+		String returnvalue = "[";
+		for (Notification p : list) {
+			returnvalue = returnvalue.concat(p.toString() + ", ");
+		}
+		if (list.size() > 0) {
+			returnvalue = returnvalue.substring(0, returnvalue.length() - 2);
+		}
+		returnvalue = returnvalue.concat("]");
+		return returnvalue;
 
-		String json = gson.toJson(notificationDAO.listNotification(userName));
-		return json;
 	}
 
 	@Transactional
@@ -414,6 +422,11 @@ public class EstateServiceImpl implements EstateService {
 	@Transactional
 	public void addComment(Comment comment) {
 		commentDAO.addComment(comment);
+	}
+
+	@Transactional
+	public String getPicture(long id) {
+		return pictureDAO.getPictureUrl(id);
 	}
 
 }
