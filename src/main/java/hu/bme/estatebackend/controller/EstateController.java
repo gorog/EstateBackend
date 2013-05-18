@@ -1,6 +1,7 @@
 package hu.bme.estatebackend.controller;
 
 import hu.bme.estatebackend.model.Comment;
+import hu.bme.estatebackend.model.Favorites;
 import hu.bme.estatebackend.model.Property;
 import hu.bme.estatebackend.service.EstateService;
 import hu.bme.estatebackend.service.PropertyService;
@@ -625,6 +626,75 @@ public class EstateController {
 
 		map.put("data", estateService.listPictureJson(propertyid));
 
+		return "json";
+	}
+
+	/**
+	 * @param map
+	 * @param principal
+	 * @return
+	 */
+	@RequestMapping("/v1/favorites.json")
+	public String listFavorites(Map<String, Object> map, Principal principal) {
+		map.put("data", estateService.listFavoritesJson(principal.getName()));
+
+		return "json";
+	}
+
+	/**
+	 * @param id
+	 * @param map
+	 * @param principal
+	 * @return
+	 */
+	@RequestMapping("/v1/favorites/{id}.json")
+	public String getFavorite(@PathVariable long id, Map<String, Object> map,
+			Principal principal) {
+
+		map.put("data", estateService.getFavoritesJson(id, principal.getName()));
+
+		return "json";
+	}
+
+	/**
+	 * @param map
+	 * @param property
+	 * @param principal
+	 * @return
+	 */
+	@RequestMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-8", value = "/v1/favorites.json", method = RequestMethod.POST)
+	public String addFavorite(
+			Map<String, Object> map,
+			@RequestParam(value = "property", required = true, defaultValue = "0") long property,
+			Principal principal) {
+
+		String response = "";
+		Favorites mFavorites = new Favorites();
+
+		mFavorites.setProperty(estateService.getProperty(property));
+		mFavorites.setUser(estateService.getUser(principal.getName()));
+
+		estateService.addFavorites(mFavorites);
+
+		map.put("data", response);
+		return "json";
+	}
+
+	/**
+	 * @param map
+	 * @param property
+	 * @param principal
+	 * @return
+	 */
+	@RequestMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-8", value = "/v1/favorites/{id}.json", method = RequestMethod.DELETE)
+	public String deleteFavorite(Map<String, Object> map, @PathVariable int id,
+			Principal principal) {
+
+		String response = "";
+
+		estateService.removeFavorites(id, principal.getName());
+
+		map.put("data", response);
 		return "json";
 	}
 }

@@ -49,7 +49,7 @@ public class NotificationDAOImpl implements NotificationDAO {
 		return sessionFactory
 				.getCurrentSession()
 				.createQuery(
-						"update Notification n set n.isread = :isread where n.id = :id and n.user in ( select u from User u where u.username = :userName)")
+						"update Notification n set n.isread = :isread where n.id = :id and n.isread != :isread and n.user in ( select u from User u where u.username = :userName)")
 				.setBoolean("isread", isread).setString("userName", userName)
 				.setLong("id", notificationId).executeUpdate();
 	}

@@ -4,6 +4,7 @@ import hu.bme.estatebackend.model.City;
 import hu.bme.estatebackend.model.Comment;
 import hu.bme.estatebackend.model.Country;
 import hu.bme.estatebackend.model.County;
+import hu.bme.estatebackend.model.Favorites;
 import hu.bme.estatebackend.model.Heating;
 import hu.bme.estatebackend.model.Notification;
 import hu.bme.estatebackend.model.NotificationType;
@@ -109,4 +110,12 @@ public interface EstateService {
 	public String getPicture(long id);
 
 	public String listPictureJson(long propertyId);
+
+	public void addFavorites(Favorites favorites);
+
+	public void removeFavorites(Integer id, String userName);
+
+	public String getFavoritesJson(long id, String userName);
+
+	public String listFavoritesJson(String userName);
 }

@@ -64,5 +64,10 @@ public class Favorites {
 	public void setProperty(Property property) {
 		this.property = property;
 	}
+	
+	public String toString(){
+		return ("{ \"id\":" + id + ", \"user\": \"" + user.getUsername()
+				+ "\", \"property\": " + property.getId() + " }");
+	}
 
 }

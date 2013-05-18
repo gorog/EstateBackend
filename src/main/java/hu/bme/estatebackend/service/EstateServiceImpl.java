@@ -4,6 +4,7 @@ import hu.bme.estatebackend.dao.CityDAO;
 import hu.bme.estatebackend.dao.CommentDAO;
 import hu.bme.estatebackend.dao.CountryDAO;
 import hu.bme.estatebackend.dao.CountyDAO;
+import hu.bme.estatebackend.dao.FavoritesDAO;
 import hu.bme.estatebackend.dao.HeatingDAO;
 import hu.bme.estatebackend.dao.NotificationDAO;
 import hu.bme.estatebackend.dao.NotificationTypeDAO;
@@ -18,6 +19,7 @@ import hu.bme.estatebackend.model.City;
 import hu.bme.estatebackend.model.Comment;
 import hu.bme.estatebackend.model.Country;
 import hu.bme.estatebackend.model.County;
+import hu.bme.estatebackend.model.Favorites;
 import hu.bme.estatebackend.model.Heating;
 import hu.bme.estatebackend.model.Notification;
 import hu.bme.estatebackend.model.NotificationType;
@@ -70,6 +72,8 @@ public class EstateServiceImpl implements EstateService {
 	private CommentDAO commentDAO;
 	@Autowired
 	private PictureDAO pictureDAO;
+	@Autowired
+	private FavoritesDAO favoritesDAO;
 
 	@Transactional
 	public void addProperty(Property property) {
@@ -236,7 +240,8 @@ public class EstateServiceImpl implements EstateService {
 	@Transactional
 	public int setNotification(long notificationId, String userName,
 			boolean isread) {
-		return notificationDAO.setNotification(notificationId, userName, isread);
+		return notificationDAO
+				.setNotification(notificationId, userName, isread);
 	}
 
 	@Transactional
@@ -443,6 +448,42 @@ public class EstateServiceImpl implements EstateService {
 		String returnvalue = "[";
 		for (Picture p : list) {
 			returnvalue = returnvalue.concat("\"" + p.getUrl() + "\", ");
+		}
+		if (list.size() > 0) {
+			returnvalue = returnvalue.substring(0, returnvalue.length() - 2);
+		}
+		returnvalue = returnvalue.concat("]");
+		return returnvalue;
+	}
+
+	@Transactional
+	public void addFavorites(Favorites favorites) {
+		favoritesDAO.addFavorites(favorites);
+	}
+
+	@Transactional
+	public void removeFavorites(Integer id, String userName) {
+		favoritesDAO.removeFavorites(id, userName);
+	}
+
+	@Transactional
+	public String getFavoritesJson(long id, String userName) {
+
+		Gson gson = new GsonBuilder()
+				.setExclusionStrategies(new MyExclusionStrategy(null))
+				.serializeNulls().create();
+
+		String json = gson.toJson(favoritesDAO.getFavorites(id, userName));
+		return json;
+	}
+
+	@Transactional
+	public String listFavoritesJson(String userName) {
+
+		List<Favorites> list = favoritesDAO.listFavorites(userName);
+		String returnvalue = "[";
+		for (Favorites p : list) {
+			returnvalue = returnvalue.concat(p.toString() + ", ");
 		}
 		if (list.size() > 0) {
 			returnvalue = returnvalue.substring(0, returnvalue.length() - 2);
