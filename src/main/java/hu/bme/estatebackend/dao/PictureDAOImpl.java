@@ -36,14 +36,13 @@ public class PictureDAOImpl implements PictureDAO {
 
 	public Picture getPicture(long picture) {
 		return (Picture) sessionFactory.getCurrentSession()
-				.createQuery("select p from Picture p")
-				.uniqueResult();
+				.createQuery("select p from Picture p").uniqueResult();
 	}
 
 	public String getPictureUrl(long picture) {
 		return ((Picture) sessionFactory.getCurrentSession()
-				.createQuery("select p from Picture p")
-				.uniqueResult()).getUrl();
+				.createQuery("select p from Picture p").uniqueResult())
+				.getUrl();
 	}
 
 }

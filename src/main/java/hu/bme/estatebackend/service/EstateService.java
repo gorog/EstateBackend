@@ -66,6 +66,8 @@ public interface EstateService {
 
 	public String getNotificationJson(long notificationId, String userName);
 
+	public int setNotification(long id, String userName, boolean isread);
+
 	public NotificationType getNotificationType(long id);
 
 	public String getNotificationTypeJson(long id);
@@ -103,6 +105,8 @@ public interface EstateService {
 	public String getCommentJson(long id);
 
 	public String listCommentJson(long propertyId);
-	
+
 	public String getPicture(long id);
+
+	public String listPictureJson(long propertyId);
 }

@@ -43,4 +43,14 @@ public class NotificationDAOImpl implements NotificationDAO {
 				.setString(0, userName).setLong(1, notificationId)
 				.uniqueResult();
 	}
+
+	public int setNotification(long notificationId, String userName,
+			boolean isread) {
+		return sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"update Notification n set n.isread = :isread where n.id = :id and n.user in ( select u from User u where u.username = :userName)")
+				.setBoolean("isread", isread).setString("userName", userName)
+				.setLong("id", notificationId).executeUpdate();
+	}
 }

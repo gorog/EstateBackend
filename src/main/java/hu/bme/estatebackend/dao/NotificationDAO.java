@@ -12,4 +12,7 @@ public interface NotificationDAO {
 	public void removeNotification(Integer id);
 
 	public Notification getNotification(long notification, String userName);
+
+	public int setNotification(long notification, String userName,
+			boolean isread);
 }

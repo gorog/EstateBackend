@@ -6,18 +6,13 @@ import hu.bme.estatebackend.service.EstateService;
 import hu.bme.estatebackend.service.PropertyService;
 import hu.bme.estatebackend.service.UserService;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
+import javax.servlet.ServletContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +31,8 @@ public class EstateController {
 	private EstateService estateService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private ServletContext servletContext;
 
 	/**
 	 * @param county
@@ -134,7 +131,7 @@ public class EstateController {
 	 * @param map
 	 * @return
 	 */
-	@RequestMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-8", value = "/v1/properties.json")
+	@RequestMapping(value = "/v1/properties.json")
 	public String listProperty(
 			@RequestParam(value = "county", required = false, defaultValue = "") String county,
 			@RequestParam(value = "city", required = false, defaultValue = "") String city,
@@ -185,7 +182,7 @@ public class EstateController {
 	 * @param principal
 	 * @return
 	 */
-	@RequestMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-x8", value = "/v1/properties/{id}.json", method = RequestMethod.POST)
+	@RequestMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-8", value = "/v1/properties/{id}.json", method = RequestMethod.POST)
 	public String updateProperty(
 			@PathVariable long id,
 			@RequestParam(value = "county", required = true, defaultValue = "0") int county,
@@ -280,6 +277,30 @@ public class EstateController {
 
 		map.put("data",
 				estateService.getNotificationJson(id, principal.getName()));
+
+		return "json";
+	}
+
+	/**
+	 * @param id
+	 * @param map
+	 * @param principal
+	 * @return
+	 */
+	@RequestMapping(value = "/v1/notifications/{id}.json", method = RequestMethod.POST)
+	public String setNotification(
+			@PathVariable long id,
+			Map<String, Object> map,
+			@RequestParam(value = "isread", required = true, defaultValue = "true") boolean isread,
+			Principal principal) {
+
+		int updated = estateService.setNotification(id, principal.getName(),
+				isread);
+		if (updated > 0) {
+			map.put("data", "\"ok\"");
+		} else {
+			map.put("data", "\"no_changes\"");
+		}
 
 		return "json";
 	}
@@ -586,14 +607,24 @@ public class EstateController {
 		return "json";
 	}
 
-	@RequestMapping("/v1/picture/{id}")
-	public ResponseEntity<byte[]> showPicture(@PathVariable long id) throws IOException {
-		InputStream in = getClass().getResourceAsStream("/pictures/10.jpg");
+	/*
+	 * @RequestMapping("/v1/pictures/{propertyid}") public
+	 * ResponseEntity<byte[]> showPicture(@PathVariable long id) throws
+	 * IOException { InputStream in =
+	 * servletContext.getResourceAsStream("/pictures/10.jpg");
+	 * 
+	 * final HttpHeaders headers = new HttpHeaders();
+	 * headers.setContentType(MediaType.IMAGE_JPEG);
+	 * 
+	 * return new ResponseEntity<byte[]>(IOUtils.toByteArray(in), headers,
+	 * HttpStatus.CREATED); }
+	 */
+	@RequestMapping("/v1/pictures/{propertyid}")
+	public String listPictureUrls(@PathVariable long propertyid,
+			Map<String, Object> map) {
 
-		final HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.IMAGE_JPEG);
+		map.put("data", estateService.listPictureJson(propertyid));
 
-		return new ResponseEntity<byte[]>(IOUtils.toByteArray(in), headers,
-				HttpStatus.CREATED);
+		return "json";
 	}
 }

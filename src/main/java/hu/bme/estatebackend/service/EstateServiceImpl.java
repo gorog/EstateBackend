@@ -23,6 +23,7 @@ import hu.bme.estatebackend.model.Notification;
 import hu.bme.estatebackend.model.NotificationType;
 import hu.bme.estatebackend.model.Offer;
 import hu.bme.estatebackend.model.Parking;
+import hu.bme.estatebackend.model.Picture;
 import hu.bme.estatebackend.model.Property;
 import hu.bme.estatebackend.model.State;
 import hu.bme.estatebackend.model.Type;
@@ -233,6 +234,12 @@ public class EstateServiceImpl implements EstateService {
 	}
 
 	@Transactional
+	public int setNotification(long notificationId, String userName,
+			boolean isread) {
+		return notificationDAO.setNotification(notificationId, userName, isread);
+	}
+
+	@Transactional
 	public String getNotificationTypeJson(long id) {
 		Gson gson = new GsonBuilder()
 				.setExclusionStrategies(new MyExclusionStrategy(null))
@@ -427,6 +434,21 @@ public class EstateServiceImpl implements EstateService {
 	@Transactional
 	public String getPicture(long id) {
 		return pictureDAO.getPictureUrl(id);
+	}
+
+	@Transactional
+	public String listPictureJson(long propertyId) {
+
+		List<Picture> list = pictureDAO.listPicture(propertyId);
+		String returnvalue = "[";
+		for (Picture p : list) {
+			returnvalue = returnvalue.concat("\"" + p.getUrl() + "\", ");
+		}
+		if (list.size() > 0) {
+			returnvalue = returnvalue.substring(0, returnvalue.length() - 2);
+		}
+		returnvalue = returnvalue.concat("]");
+		return returnvalue;
 	}
 
 }
