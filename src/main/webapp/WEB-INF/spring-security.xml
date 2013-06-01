@@ -6,7 +6,10 @@
 	http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
 	<http auto-config="true">
-		<intercept-url pattern="/v1/**" access="ROLE_USER" />
+		<intercept-url pattern="/v1/properties**" access="ROLE_USER" />
+		<intercept-url pattern="/v1/notifications**" access="ROLE_USER" />
+		<intercept-url pattern="/v1/favorites**" access="ROLE_USER" />
+		<intercept-url pattern="/v1/comments**" access="ROLE_USER" />
 	</http>
 
 	<authentication-manager>

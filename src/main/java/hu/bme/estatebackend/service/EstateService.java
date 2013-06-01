@@ -36,6 +36,8 @@ public interface EstateService {
 			String timestamp, int offset);
 
 	public User getUser(String userName);
+	
+	public String getUserJson(String userName);
 
 	public City getCity(long id);
 

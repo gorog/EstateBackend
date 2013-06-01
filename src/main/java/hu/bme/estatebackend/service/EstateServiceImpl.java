@@ -102,12 +102,7 @@ public class EstateServiceImpl implements EstateService {
 
 	@Transactional
 	public String getPropertyJson(long id) {
-		Gson gson = new GsonBuilder()
-				.setExclusionStrategies(new MyExclusionStrategy(null))
-				.serializeNulls().create();
-
-		String json = gson.toJson(propertyDAO.getProperty(id));
-		return json;
+		return propertyDAO.getProperty(id).toString();
 	}
 
 	@Transactional
@@ -490,6 +485,17 @@ public class EstateServiceImpl implements EstateService {
 		}
 		returnvalue = returnvalue.concat("]");
 		return returnvalue;
+	}
+
+	@Transactional
+	public String getUserJson(String userName) {
+		Gson gson = new GsonBuilder()
+				.setExclusionStrategies(new MyExclusionStrategy(null))
+				.serializeNulls().create();
+
+		String json = gson.toJson(userDAO.getUser(userName));
+
+		return json;
 	}
 
 }

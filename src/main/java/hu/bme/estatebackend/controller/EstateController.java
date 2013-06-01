@@ -4,8 +4,6 @@ import hu.bme.estatebackend.model.Comment;
 import hu.bme.estatebackend.model.Favorites;
 import hu.bme.estatebackend.model.Property;
 import hu.bme.estatebackend.service.EstateService;
-import hu.bme.estatebackend.service.PropertyService;
-import hu.bme.estatebackend.service.UserService;
 
 import java.security.Principal;
 import java.sql.Timestamp;
@@ -27,11 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class EstateController {
 	@Autowired
-	private PropertyService propertyService;
-	@Autowired
 	private EstateService estateService;
-	@Autowired
-	private UserService userService;
 	@Autowired
 	private ServletContext servletContext;
 
@@ -686,7 +680,7 @@ public class EstateController {
 	 * @param principal
 	 * @return
 	 */
-	@RequestMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-8", value = "/v1/favorites/{id}.json", method = RequestMethod.DELETE)
+	@RequestMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-8", value = "/v1/favorites/{id}.json", method = RequestMethod.POST)
 	public String deleteFavorite(Map<String, Object> map, @PathVariable int id,
 			Principal principal) {
 
@@ -695,6 +689,21 @@ public class EstateController {
 		estateService.removeFavorites(id, principal.getName());
 
 		map.put("data", response);
+		return "json";
+	}
+
+	/**
+	 * @param userName
+	 * @param map
+	 * @param principal
+	 * @return
+	 */
+	@RequestMapping("/v1/users/{userName}.json")
+	public String getUser(@PathVariable String userName,
+			Map<String, Object> map, Principal principal) {
+
+		map.put("data", estateService.getUserJson(userName));
+
 		return "json";
 	}
 }

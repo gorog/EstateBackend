@@ -2,21 +2,17 @@ package hu.bme.estatebackend.model;
 
 import hu.bme.gson.MyExclusionStrategy.Serialize;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "USER")
 public class User {
-	
-	@Serialize
+
 	@Id
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -47,12 +43,6 @@ public class User {
 
 	@Column(name = "ENABLED")
 	private boolean enabled;
-
-	/*
-	 * @OneToMany(mappedBy = "user") private Set<UserRoles> userRoles;
-	 * 
-	 * @OneToMany(mappedBy = "user") private Set<Notification> notification;
-	 */
 
 	public User() {
 		super();
@@ -134,15 +124,4 @@ public class User {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
-	/*
-	 * public Set<UserRoles> getUserRoles() { return userRoles; }
-	 * 
-	 * public void setUserRoles(Set<UserRoles> userRoles) { this.userRoles =
-	 * userRoles; }
-	 * 
-	 * public Set<Notification> getNotification() { return notification; }
-	 * 
-	 * public void setNotification(Set<Notification> notification) {
-	 * this.notification = notification; }
-	 */
 }
