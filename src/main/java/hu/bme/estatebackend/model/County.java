@@ -2,8 +2,6 @@ package hu.bme.estatebackend.model;
 
 import hu.bme.gson.MyExclusionStrategy.Serialize;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -31,9 +28,6 @@ public class County {
 	@ManyToOne
 	@JoinColumn(name = "COUNTRY_ID")
 	private Country country;
-
-	@OneToMany(mappedBy = "county")
-	private Set<City> city;
 
 	public County() {
 		super();
@@ -68,14 +62,6 @@ public class County {
 
 	public void setCountry(Country country) {
 		this.country = country;
-	}
-
-	public Set<City> getCity() {
-		return city;
-	}
-
-	public void setCity(Set<City> city) {
-		this.city = city;
 	}
 
 	public String toString() {

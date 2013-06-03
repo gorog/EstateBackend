@@ -3,8 +3,6 @@ package hu.bme.estatebackend.model;
 import hu.bme.gson.MyExclusionStrategy.Serialize;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -48,9 +45,6 @@ public class Comment {
 	@ManyToOne
 	@JoinColumn(name = "COMMENT_ID")
 	private Comment commentId;
-
-	@OneToMany(mappedBy = "commentId")
-	private Set<Comment> comments = new HashSet<Comment>();
 
 	public Comment() {
 		super();
@@ -113,14 +107,6 @@ public class Comment {
 
 	public void setCommentId(Comment commentId) {
 		this.commentId = commentId;
-	}
-
-	public Set<Comment> getComments() {
-		return comments;
-	}
-
-	public void setComments(Set<Comment> comments) {
-		this.comments = comments;
 	}
 
 	public String toString() {

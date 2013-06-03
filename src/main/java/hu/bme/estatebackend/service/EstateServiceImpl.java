@@ -31,18 +31,43 @@ import hu.bme.estatebackend.model.State;
 import hu.bme.estatebackend.model.Type;
 import hu.bme.estatebackend.model.User;
 import hu.bme.gson.MyExclusionStrategy;
+import hu.bme.wadl.Application;
+import hu.bme.wadl.Doc;
+import hu.bme.wadl.Method;
+import hu.bme.wadl.Param;
+import hu.bme.wadl.ParamStyle;
+import hu.bme.wadl.Representation;
+import hu.bme.wadl.Request;
+import hu.bme.wadl.Resource;
+import hu.bme.wadl.Resources;
+import hu.bme.wadl.Response;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.condition.ProducesRequestCondition;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 @Service
 public class EstateServiceImpl implements EstateService {
+
+	private static final String APP_NAME = "TestWeb";
 
 	@Autowired
 	private PropertyDAO propertyDAO;
@@ -74,6 +99,8 @@ public class EstateServiceImpl implements EstateService {
 	private PictureDAO pictureDAO;
 	@Autowired
 	private FavoritesDAO favoritesDAO;
+	@Autowired
+	private RequestMappingHandlerMapping handlerMapping;
 
 	@Transactional
 	public void addProperty(Property property) {
@@ -496,6 +523,119 @@ public class EstateServiceImpl implements EstateService {
 		String json = gson.toJson(userDAO.getUser(userName));
 
 		return json;
+	}
+
+	public Application generateWadl(HttpServletRequest request) {
+		Application result = new Application();
+		Doc doc = new Doc();
+		doc.setTitle("TestWeb WADL");
+		result.getDoc().add(doc);
+		Resources wadResources = new Resources();
+		wadResources.setBase(getBaseUrl(request));
+
+		Map<RequestMappingInfo, HandlerMethod> handletMethods = handlerMapping
+				.getHandlerMethods();
+		for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handletMethods
+				.entrySet()) {
+
+			HandlerMethod handlerMethod = entry.getValue();
+			RequestMappingInfo mappingInfo = entry.getKey();
+
+			Set<String> pattern = mappingInfo.getPatternsCondition()
+					.getPatterns();
+			if (!pattern.contains("/v1/application.wadl")) {
+
+				Resource wadlResource = new Resource();
+				Set<RequestMethod> httpMethods = mappingInfo
+						.getMethodsCondition().getMethods();
+				ProducesRequestCondition producesRequestCondition = mappingInfo
+						.getProducesCondition();
+				Set<MediaType> mediaTypes = producesRequestCondition
+						.getProducibleMediaTypes();
+
+				for (RequestMethod httpMethod : httpMethods) {
+					Method wadlMethod = new Method();
+
+					for (String uri : pattern) {
+						wadlResource.setPath(uri);
+					}
+
+					wadlMethod.setName(httpMethod.name());
+					java.lang.reflect.Method javaMethod = handlerMethod
+							.getMethod();
+					wadlMethod.setId(javaMethod.getName());
+
+					// Request
+					Request wadlRequest = new Request();
+
+					Annotation[][] annotations = javaMethod
+							.getParameterAnnotations();
+					for (Annotation[] annotation : annotations) {
+						for (Annotation annotation2 : annotation) {
+							if (annotation2 instanceof RequestParam) {
+								RequestParam param2 = (RequestParam) annotation2;
+								Param waldParam = new Param();
+								waldParam.setName(param2.value());
+								waldParam.setStyle(ParamStyle.QUERY);
+								waldParam.setRequired(param2.required());
+
+								String defaultValue = cleanDefault(param2
+										.defaultValue());
+								if (!defaultValue.equals("")) {
+									waldParam.setDefault(defaultValue);
+								}
+
+								wadlRequest.getParam().add(waldParam);
+							} else if (annotation2 instanceof PathVariable) {
+								PathVariable param2 = (PathVariable) annotation2;
+								Param waldParam = new Param();
+								waldParam.setName(param2.value());
+								waldParam.setStyle(ParamStyle.TEMPLATE);
+								waldParam.setRequired(true);
+								wadlRequest.getParam().add(waldParam);
+							}
+						}
+					}
+					if (!wadlRequest.getParam().isEmpty()) {
+						wadlMethod.setRequest(wadlRequest);
+					}
+
+					// Response
+					if (!mediaTypes.isEmpty()) {
+						Response wadlResponse = new Response();
+						wadlResponse.getStatus().add(200l);
+						for (MediaType mediaType : mediaTypes) {
+							Representation wadlRepresentation = new Representation();
+							wadlRepresentation.setMediaType(mediaType
+									.toString());
+							wadlResponse.getRepresentation().add(
+									wadlRepresentation);
+						}
+						wadlMethod.getResponse().add(wadlResponse);
+					}
+
+					wadlResource.getMethodOrResource().add(wadlMethod);
+
+				}
+
+				wadResources.getResource().add(wadlResource);
+			}
+		}
+		result.getResources().add(wadResources);
+
+		return result;
+	}
+
+	private String getBaseUrl(HttpServletRequest request) {
+		String requestUri = request.getRequestURI();
+		return request.getScheme() + "://" + request.getServerName() + ":"
+				+ request.getServerPort() + "/" + APP_NAME;
+	}
+
+	private String cleanDefault(String value) {
+		value = value.replaceAll("\t", "");
+		value = value.replaceAll("\n", "");
+		return value;
 	}
 
 }

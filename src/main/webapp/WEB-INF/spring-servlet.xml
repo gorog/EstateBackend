@@ -17,8 +17,9 @@
 	<mvc:annotation-driven />
 	<context:component-scan base-package="hu.bme.estatebackend" />
 
-	<mvc:resources location="/pictures/" mapping="/pictures/**" cache-period="60" />
-	
+	<mvc:resources location="/pictures/" mapping="/pictures/**"
+		cache-period="60" />
+
 	<bean id="jspViewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass"
@@ -32,6 +33,7 @@
 		<property name="basename" value="classpath:messages" />
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
+
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
 		p:location="/WEB-INF/jdbc.properties" />

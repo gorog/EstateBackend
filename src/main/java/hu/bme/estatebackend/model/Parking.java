@@ -22,6 +22,7 @@ public class Parking {
 	@Column(name = "NAME")
 	private String name;
 
+	@Serialize
 	@Column(name = "DESCRIPTION")
 	private String description;
 

@@ -4,12 +4,14 @@ import hu.bme.estatebackend.model.Comment;
 import hu.bme.estatebackend.model.Favorites;
 import hu.bme.estatebackend.model.Property;
 import hu.bme.estatebackend.service.EstateService;
+import hu.bme.wadl.Application;
 
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,9 +19,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author Szabo Tamas
+ * 
+ */
+/**
+ * @author Gorog
  * 
  */
 @Controller
@@ -28,86 +35,6 @@ public class EstateController {
 	private EstateService estateService;
 	@Autowired
 	private ServletContext servletContext;
-
-	/**
-	 * @param county
-	 * @param city
-	 * @param street
-	 * @param house_number
-	 * @param floor
-	 * @param room
-	 * @param heating
-	 * @param offer
-	 * @param parking
-	 * @param place
-	 * @param state
-	 * @param type
-	 * @param price
-	 * @param rent
-	 * @param rooms
-	 * @param longitude
-	 * @param latitude
-	 * @param elevator
-	 * @param comment
-	 * @param map
-	 * @param principal
-	 * @return
-	 */
-	@RequestMapping(value = "/v1/properties.json", method = RequestMethod.POST)
-	public String addProperty(
-			@RequestParam(value = "county", required = true, defaultValue = "0") int county,
-			@RequestParam(value = "city", required = false, defaultValue = "0") int city,
-			@RequestParam(value = "street", required = false, defaultValue = "") String street,
-			@RequestParam(value = "house_number", required = false, defaultValue = "") String house_number,
-			@RequestParam(value = "floor", required = false, defaultValue = "") String floor,
-			@RequestParam(value = "room", required = false, defaultValue = "") String room,
-			@RequestParam(value = "heating", required = false, defaultValue = "0") int heating,
-			@RequestParam(value = "offer", required = true, defaultValue = "1") int offer,
-			@RequestParam(value = "parking", required = false, defaultValue = "0") int parking,
-			@RequestParam(value = "place", required = false, defaultValue = "") Float place,
-			@RequestParam(value = "state", required = false, defaultValue = "0") int state,
-			@RequestParam(value = "type", required = false, defaultValue = "0") int type,
-			@RequestParam(value = "price", required = false, defaultValue = "") Float price,
-			@RequestParam(value = "rent", required = false, defaultValue = "") Float rent,
-			@RequestParam(value = "rooms", required = false, defaultValue = "") String rooms,
-			@RequestParam(value = "longitude", required = false, defaultValue = "0") int longitude,
-			@RequestParam(value = "latitude", required = false, defaultValue = "0") int latitude,
-			@RequestParam(value = "elevator", required = false, defaultValue = "false") boolean elevator,
-			@RequestParam(value = "comment", required = false, defaultValue = "") String comment,
-			Map<String, Object> map, Principal principal) {
-
-		String response = "";
-		Property property = new Property();
-		// county és city.county eltér?
-		property.setCountry(estateService.getCounty(county).getCountry());
-		property.setCounty(estateService.getCounty(county));
-		property.setCity(estateService.getCity(city));
-		property.setStreet(street);
-		property.setHouse_number(house_number);
-		property.setFloor(floor);
-		property.setRoom(rooms);
-		property.setHeating(estateService.getHeating(heating));
-		property.setOffer(estateService.getOffer(offer));
-		property.setParking(estateService.getParking(parking));
-		property.setPlace(place);
-		property.setState(estateService.getState(state));
-		property.setType(estateService.getType(type));
-		property.setRooms(rooms);
-		property.setLongitude(longitude);
-		property.setLatitude(latitude);
-		property.setElevator(elevator);
-		property.setComment(comment);
-		property.setUser(estateService.getUser(principal.getName()));
-		java.util.Date date = new java.util.Date();
-		property.setTimestamp(new Timestamp(date.getTime()));
-
-		estateService.addProperty(property);
-		response = "\"ok\"";
-
-		map.put("data", response);
-
-		return "text";
-	}
 
 	/**
 	 * @param county
@@ -126,7 +53,7 @@ public class EstateController {
 	 * @param map
 	 * @return
 	 */
-	@RequestMapping(value = "/v1/properties.json")
+	@RequestMapping(value = "/v1/properties.json", method = RequestMethod.GET)
 	public String listProperty(
 			@RequestParam(value = "county", required = false, defaultValue = "") String county,
 			@RequestParam(value = "city", required = false, defaultValue = "") String city,
@@ -179,7 +106,7 @@ public class EstateController {
 	 */
 	@RequestMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-8", value = "/v1/properties/{id}.json", method = RequestMethod.POST)
 	public String updateProperty(
-			@PathVariable long id,
+			@PathVariable("id") long id,
 			@RequestParam(value = "county", required = true, defaultValue = "0") int county,
 			@RequestParam(value = "city", required = false, defaultValue = "0") int city,
 			@RequestParam(value = "street", required = false, defaultValue = "") String street,
@@ -240,8 +167,9 @@ public class EstateController {
 	 * @param map
 	 * @return
 	 */
-	@RequestMapping("/v1/properties/{id}.json")
-	public String getProperty(@PathVariable long id, Map<String, Object> map) {
+	@RequestMapping(value = "/v1/properties/{id}.json", method = RequestMethod.GET)
+	public String getProperty(@PathVariable("id") long id,
+			Map<String, Object> map) {
 
 		map.put("data", estateService.getPropertyJson(id));
 
@@ -249,11 +177,95 @@ public class EstateController {
 	}
 
 	/**
+	 * @param county
+	 * @param city
+	 * @param street
+	 * @param house_number
+	 * @param floor
+	 * @param room
+	 * @param heating
+	 * @param offer
+	 * @param parking
+	 * @param place
+	 * @param state
+	 * @param type
+	 * @param price
+	 * @param rent
+	 * @param rooms
+	 * @param longitude
+	 * @param latitude
+	 * @param elevator
+	 * @param comment
 	 * @param map
 	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/notifications.json")
+	@RequestMapping(value = "/v1/properties.json", method = RequestMethod.POST)
+	public String addProperty(
+			@RequestParam(value = "county", required = true, defaultValue = "0") int county,
+			@RequestParam(value = "city", required = false, defaultValue = "0") int city,
+			@RequestParam(value = "street", required = false, defaultValue = "") String street,
+			@RequestParam(value = "house_number", required = false, defaultValue = "") String house_number,
+			@RequestParam(value = "floor", required = false, defaultValue = "") String floor,
+			@RequestParam(value = "room", required = false, defaultValue = "") String room,
+			@RequestParam(value = "heating", required = false, defaultValue = "0") int heating,
+			@RequestParam(value = "offer", required = true, defaultValue = "1") int offer,
+			@RequestParam(value = "parking", required = false, defaultValue = "0") int parking,
+			@RequestParam(value = "place", required = false, defaultValue = "") Float place,
+			@RequestParam(value = "state", required = false, defaultValue = "0") int state,
+			@RequestParam(value = "type", required = false, defaultValue = "0") int type,
+			@RequestParam(value = "price", required = false, defaultValue = "") Float price,
+			@RequestParam(value = "rent", required = false, defaultValue = "") Float rent,
+			@RequestParam(value = "rooms", required = false, defaultValue = "") String rooms,
+			@RequestParam(value = "longitude", required = false, defaultValue = "0") int longitude,
+			@RequestParam(value = "latitude", required = false, defaultValue = "0") int latitude,
+			@RequestParam(value = "elevator", required = false, defaultValue = "false") boolean elevator,
+			@RequestParam(value = "comment", required = false, defaultValue = "") String comment,
+			Map<String, Object> map, Principal principal) {
+
+		String response = "";
+		Property property = new Property();
+		if (estateService.getCounty(county).equals(estateService.getCity(city))) {
+
+			property.setCountry(estateService.getCounty(county).getCountry());
+			property.setCounty(estateService.getCounty(county));
+			property.setCity(estateService.getCity(city));
+			property.setStreet(street);
+			property.setHouse_number(house_number);
+			property.setFloor(floor);
+			property.setRoom(rooms);
+			property.setHeating(estateService.getHeating(heating));
+			property.setOffer(estateService.getOffer(offer));
+			property.setParking(estateService.getParking(parking));
+			property.setPlace(place);
+			property.setState(estateService.getState(state));
+			property.setType(estateService.getType(type));
+			property.setRooms(rooms);
+			property.setLongitude(longitude);
+			property.setLatitude(latitude);
+			property.setElevator(elevator);
+			property.setComment(comment);
+			property.setUser(estateService.getUser(principal.getName()));
+			java.util.Date date = new java.util.Date();
+			property.setTimestamp(new Timestamp(date.getTime()));
+
+			estateService.addProperty(property);
+			response = "\"ok\"";
+		} else {
+			response = "\"error\"";
+		}
+
+		map.put("data", response);
+
+		return "text";
+	}
+
+	/**
+	 * @param map
+	 * @param principal
+	 * @return
+	 */
+	@RequestMapping(value = "/v1/notifications.json", method = RequestMethod.GET)
 	public String listNotification(Map<String, Object> map, Principal principal) {
 		map.put("data", estateService.listNotificationJson(principal.getName()));
 
@@ -266,8 +278,8 @@ public class EstateController {
 	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/notifications/{id}.json")
-	public String getNotification(@PathVariable long id,
+	@RequestMapping(value = "/v1/notifications/{id}.json", method = RequestMethod.GET)
+	public String getNotification(@PathVariable("id") long id,
 			Map<String, Object> map, Principal principal) {
 
 		map.put("data",
@@ -284,7 +296,7 @@ public class EstateController {
 	 */
 	@RequestMapping(value = "/v1/notifications/{id}.json", method = RequestMethod.POST)
 	public String setNotification(
-			@PathVariable long id,
+			@PathVariable("id") long id,
 			Map<String, Object> map,
 			@RequestParam(value = "isread", required = true, defaultValue = "true") boolean isread,
 			Principal principal) {
@@ -302,11 +314,10 @@ public class EstateController {
 
 	/**
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/cities.json")
-	public String listCity(Map<String, Object> map, Principal principal) {
+	@RequestMapping(value = "/v1/cities.json", method = RequestMethod.GET)
+	public String listCity(Map<String, Object> map) {
 		map.put("data", estateService.listCityJson());
 
 		return "json";
@@ -315,12 +326,10 @@ public class EstateController {
 	/**
 	 * @param id
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/cities/{id}.json")
-	public String getCity(@PathVariable long id, Map<String, Object> map,
-			Principal principal) {
+	@RequestMapping(value = "/v1/cities/{id}.json", method = RequestMethod.GET)
+	public String getCity(@PathVariable("id") long id, Map<String, Object> map) {
 
 		map.put("data", estateService.getCityJson(id));
 
@@ -329,11 +338,10 @@ public class EstateController {
 
 	/**
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/countries.json")
-	public String listCountries(Map<String, Object> map, Principal principal) {
+	@RequestMapping(value = "/v1/countries.json", method = RequestMethod.GET)
+	public String listCountries(Map<String, Object> map) {
 		map.put("data", estateService.listCountryJson());
 
 		return "json";
@@ -345,9 +353,9 @@ public class EstateController {
 	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/countries/{id}.json")
-	public String getCountries(@PathVariable long id, Map<String, Object> map,
-			Principal principal) {
+	@RequestMapping(value = "/v1/countries/{id}.json", method = RequestMethod.GET)
+	public String getCountries(@PathVariable("id") long id,
+			Map<String, Object> map, Principal principal) {
 
 		map.put("data", estateService.getCountryJson(id));
 
@@ -356,19 +364,23 @@ public class EstateController {
 
 	/**
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/counties.json")
-	public String listCounties(Map<String, Object> map, Principal principal) {
+	@RequestMapping(value = "/v1/counties.json", method = RequestMethod.GET)
+	public String listCounties(Map<String, Object> map) {
 		map.put("data", estateService.listCountyJson());
 
 		return "json";
 	}
 
-	@RequestMapping("/v1/counties/{id}.json")
-	public String getCounties(@PathVariable long id, Map<String, Object> map,
-			Principal principal) {
+	/**
+	 * @param id
+	 * @param map
+	 * @return
+	 */
+	@RequestMapping(value = "/v1/counties/{id}.json", method = RequestMethod.GET)
+	public String getCounties(@PathVariable("id") long id,
+			Map<String, Object> map) {
 
 		map.put("data", estateService.getCountyJson(id));
 
@@ -377,11 +389,10 @@ public class EstateController {
 
 	/**
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/heatings.json")
-	public String listHeatings(Map<String, Object> map, Principal principal) {
+	@RequestMapping(value = "/v1/heatings.json", method = RequestMethod.GET)
+	public String listHeatings(Map<String, Object> map) {
 		map.put("data", estateService.listHeatingJson());
 
 		return "json";
@@ -390,12 +401,11 @@ public class EstateController {
 	/**
 	 * @param id
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/heatings/{id}.json")
-	public String getHeating(@PathVariable long id, Map<String, Object> map,
-			Principal principal) {
+	@RequestMapping(value = "/v1/heatings/{id}.json", method = RequestMethod.GET)
+	public String getHeating(@PathVariable("id") long id,
+			Map<String, Object> map) {
 
 		map.put("data", estateService.getHeatingJson(id));
 
@@ -404,12 +414,10 @@ public class EstateController {
 
 	/**
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/notificationtypes.json")
-	public String listNotificationTypes(Map<String, Object> map,
-			Principal principal) {
+	@RequestMapping(value = "/v1/notificationtypes.json", method = RequestMethod.GET)
+	public String listNotificationTypes(Map<String, Object> map) {
 		map.put("data", estateService.listNotificationTypeJson());
 
 		return "json";
@@ -418,12 +426,11 @@ public class EstateController {
 	/**
 	 * @param id
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/notificationtypes/{id}.json")
-	public String getNotificationType(@PathVariable long id,
-			Map<String, Object> map, Principal principal) {
+	@RequestMapping(value = "/v1/notificationtypes/{id}.json", method = RequestMethod.GET)
+	public String getNotificationType(@PathVariable("id") long id,
+			Map<String, Object> map) {
 
 		map.put("data", estateService.getNotificationTypeJson(id));
 
@@ -432,11 +439,10 @@ public class EstateController {
 
 	/**
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/offers.json")
-	public String listOffers(Map<String, Object> map, Principal principal) {
+	@RequestMapping(value = "/v1/offers.json", method = RequestMethod.GET)
+	public String listOffers(Map<String, Object> map) {
 		map.put("data", estateService.listOfferJson());
 
 		return "json";
@@ -445,12 +451,10 @@ public class EstateController {
 	/**
 	 * @param id
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/offers/{id}.json")
-	public String getOffer(@PathVariable long id, Map<String, Object> map,
-			Principal principal) {
+	@RequestMapping(value = "/v1/offers/{id}.json", method = RequestMethod.GET)
+	public String getOffer(@PathVariable("id") long id, Map<String, Object> map) {
 
 		map.put("data", estateService.getOfferJson(id));
 
@@ -459,11 +463,10 @@ public class EstateController {
 
 	/**
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/parkings.json")
-	public String listParkings(Map<String, Object> map, Principal principal) {
+	@RequestMapping(value = "/v1/parkings.json", method = RequestMethod.GET)
+	public String listParkings(Map<String, Object> map) {
 		map.put("data", estateService.listParkingJson());
 
 		return "json";
@@ -472,12 +475,11 @@ public class EstateController {
 	/**
 	 * @param id
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/parking/{id}.json")
-	public String getParking(@PathVariable long id, Map<String, Object> map,
-			Principal principal) {
+	@RequestMapping(value = "/v1/parking/{id}.json", method = RequestMethod.GET)
+	public String getParking(@PathVariable("id") long id,
+			Map<String, Object> map) {
 
 		map.put("data", estateService.getParkingJson(id));
 
@@ -486,11 +488,10 @@ public class EstateController {
 
 	/**
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/states.json")
-	public String listStates(Map<String, Object> map, Principal principal) {
+	@RequestMapping(value = "/v1/states.json", method = RequestMethod.GET)
+	public String listStates(Map<String, Object> map) {
 		map.put("data", estateService.listStateJson());
 
 		return "json";
@@ -499,12 +500,10 @@ public class EstateController {
 	/**
 	 * @param id
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/states/{id}.json")
-	public String getState(@PathVariable long id, Map<String, Object> map,
-			Principal principal) {
+	@RequestMapping(value = "/v1/states/{id}.json", method = RequestMethod.GET)
+	public String getState(@PathVariable("id") long id, Map<String, Object> map) {
 
 		map.put("data", estateService.getStateJson(id));
 
@@ -513,11 +512,10 @@ public class EstateController {
 
 	/**
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/types.json")
-	public String listTypes(Map<String, Object> map, Principal principal) {
+	@RequestMapping(value = "/v1/types.json", method = RequestMethod.GET)
+	public String listTypes(Map<String, Object> map) {
 		map.put("data", estateService.listTypeJson());
 
 		return "json";
@@ -526,12 +524,10 @@ public class EstateController {
 	/**
 	 * @param id
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/types/{id}.json")
-	public String getType(@PathVariable long id, Map<String, Object> map,
-			Principal principal) {
+	@RequestMapping(value = "/v1/types/{id}.json", method = RequestMethod.GET)
+	public String getType(@PathVariable("id") long id, Map<String, Object> map) {
 
 		map.put("data", estateService.getTypeJson(id));
 
@@ -544,7 +540,7 @@ public class EstateController {
 	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/comments.json")
+	@RequestMapping(value = "/v1/comments.json", method = RequestMethod.GET)
 	public String listComments(
 			Map<String, Object> map,
 			@RequestParam(value = "property", required = true, defaultValue = "0") long property,
@@ -593,9 +589,9 @@ public class EstateController {
 	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/comments/{id}.json")
-	public String getComment(@PathVariable long id, Map<String, Object> map,
-			Principal principal) {
+	@RequestMapping(value = "/v1/comments/{id}.json", method = RequestMethod.GET)
+	public String getComment(@PathVariable("id") long id,
+			Map<String, Object> map, Principal principal) {
 
 		map.put("data", estateService.getCommentJson(id));
 
@@ -614,8 +610,8 @@ public class EstateController {
 	 * return new ResponseEntity<byte[]>(IOUtils.toByteArray(in), headers,
 	 * HttpStatus.CREATED); }
 	 */
-	@RequestMapping("/v1/pictures/{propertyid}")
-	public String listPictureUrls(@PathVariable long propertyid,
+	@RequestMapping(value = "/v1/pictures/{propertyid}", method = RequestMethod.GET)
+	public String listPictureUrls(@PathVariable("propertyid") long propertyid,
 			Map<String, Object> map) {
 
 		map.put("data", estateService.listPictureJson(propertyid));
@@ -628,7 +624,7 @@ public class EstateController {
 	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/favorites.json")
+	@RequestMapping(value = "/v1/favorites.json", method = RequestMethod.GET)
 	public String listFavorites(Map<String, Object> map, Principal principal) {
 		map.put("data", estateService.listFavoritesJson(principal.getName()));
 
@@ -641,9 +637,9 @@ public class EstateController {
 	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/favorites/{id}.json")
-	public String getFavorite(@PathVariable long id, Map<String, Object> map,
-			Principal principal) {
+	@RequestMapping(value = "/v1/favorites/{id}.json", method = RequestMethod.GET)
+	public String getFavorite(@PathVariable("id") long id,
+			Map<String, Object> map, Principal principal) {
 
 		map.put("data", estateService.getFavoritesJson(id, principal.getName()));
 
@@ -681,8 +677,8 @@ public class EstateController {
 	 * @return
 	 */
 	@RequestMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-8", value = "/v1/favorites/{id}.json", method = RequestMethod.POST)
-	public String deleteFavorite(Map<String, Object> map, @PathVariable int id,
-			Principal principal) {
+	public String deleteFavorite(Map<String, Object> map,
+			@PathVariable("id") int id, Principal principal) {
 
 		String response = "";
 
@@ -695,15 +691,23 @@ public class EstateController {
 	/**
 	 * @param userName
 	 * @param map
-	 * @param principal
 	 * @return
 	 */
-	@RequestMapping("/v1/users/{userName}.json")
-	public String getUser(@PathVariable String userName,
-			Map<String, Object> map, Principal principal) {
+	@RequestMapping(value = "/v1/users/{userName}.json", method = RequestMethod.GET)
+	public String getUser(@PathVariable("userName") String userName,
+			Map<String, Object> map) {
 
 		map.put("data", estateService.getUserJson(userName));
 
 		return "json";
+	}
+
+	@RequestMapping(value = "/v1/application.wadl", method = RequestMethod.GET, produces = { "application/xml" })
+	public @ResponseBody
+	Application generateWadl(HttpServletRequest request) {
+		Application result = new Application();
+		result = estateService.generateWadl(request);
+
+		return result;
 	}
 }

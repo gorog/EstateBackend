@@ -2,14 +2,11 @@ package hu.bme.estatebackend.model;
 
 import hu.bme.gson.MyExclusionStrategy.Serialize;
 
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -28,9 +25,6 @@ public class Country {
 	@Serialize
 	@Column(name = "NAME")
 	private String name;
-
-	@OneToMany(mappedBy = "country")
-	private Set<County> countys;
 
 	public Country() {
 		super();
@@ -65,14 +59,6 @@ public class Country {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public Set<County> getCountys() {
-		return countys;
-	}
-
-	public void setCountys(Set<County> county) {
-		this.countys = county;
 	}
 
 }

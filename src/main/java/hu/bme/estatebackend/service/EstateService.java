@@ -14,8 +14,11 @@ import hu.bme.estatebackend.model.Property;
 import hu.bme.estatebackend.model.State;
 import hu.bme.estatebackend.model.Type;
 import hu.bme.estatebackend.model.User;
+import hu.bme.wadl.Application;
 
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 public interface EstateService {
 	public void addProperty(Property property);
@@ -36,7 +39,7 @@ public interface EstateService {
 			String timestamp, int offset);
 
 	public User getUser(String userName);
-	
+
 	public String getUserJson(String userName);
 
 	public City getCity(long id);
@@ -120,4 +123,6 @@ public interface EstateService {
 	public String getFavoritesJson(long id, String userName);
 
 	public String listFavoritesJson(String userName);
+
+	public Application generateWadl(HttpServletRequest request);
 }
