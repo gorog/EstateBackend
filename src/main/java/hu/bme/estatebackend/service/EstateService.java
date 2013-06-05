@@ -21,7 +21,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 public interface EstateService {
-	public void addProperty(Property property);
+	public Integer addProperty(Property property);
 
 	public List<Property> listProperty();
 

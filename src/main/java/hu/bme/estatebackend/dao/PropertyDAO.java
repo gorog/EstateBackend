@@ -5,7 +5,7 @@ import hu.bme.estatebackend.model.Property;
 import java.util.List;
 
 public interface PropertyDAO {
-	public void addProperty(Property property);
+	public Integer addProperty(Property property);
 
 	public List<Property> listProperty();
 

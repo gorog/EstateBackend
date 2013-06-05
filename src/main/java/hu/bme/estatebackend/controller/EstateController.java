@@ -21,14 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-/**
- * @author Szabo Tamas
- * 
- */
-/**
- * @author Gorog
- * 
- */
 @Controller
 public class EstateController {
 	@Autowired
@@ -36,23 +28,6 @@ public class EstateController {
 	@Autowired
 	private ServletContext servletContext;
 
-	/**
-	 * @param county
-	 * @param city
-	 * @param heating
-	 * @param offer
-	 * @param parking
-	 * @param state
-	 * @param type
-	 * @param user
-	 * @param price
-	 * @param rent
-	 * @param elevator
-	 * @param timestamp
-	 * @param offset
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/properties.json", method = RequestMethod.GET)
 	public String listProperty(
 			@RequestParam(value = "county", required = false, defaultValue = "") String county,
@@ -77,33 +52,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * 
-	 * 
-	 * @param id
-	 * @param county
-	 * @param city
-	 * @param street
-	 * @param house_number
-	 * @param floor
-	 * @param room
-	 * @param heating
-	 * @param offer
-	 * @param parking
-	 * @param place
-	 * @param state
-	 * @param type
-	 * @param price
-	 * @param rent
-	 * @param rooms
-	 * @param longitude
-	 * @param latitude
-	 * @param elevator
-	 * @param comment
-	 * @param map
-	 * @param principal
-	 * @return
-	 */
 	@RequestMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-8", value = "/v1/properties/{id}.json", method = RequestMethod.POST)
 	public String updateProperty(
 			@PathVariable("id") long id,
@@ -162,11 +110,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param id
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/properties/{id}.json", method = RequestMethod.GET)
 	public String getProperty(@PathVariable("id") long id,
 			Map<String, Object> map) {
@@ -176,31 +119,7 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param county
-	 * @param city
-	 * @param street
-	 * @param house_number
-	 * @param floor
-	 * @param room
-	 * @param heating
-	 * @param offer
-	 * @param parking
-	 * @param place
-	 * @param state
-	 * @param type
-	 * @param price
-	 * @param rent
-	 * @param rooms
-	 * @param longitude
-	 * @param latitude
-	 * @param elevator
-	 * @param comment
-	 * @param map
-	 * @param principal
-	 * @return
-	 */
-	@RequestMapping(value = "/v1/properties.json", method = RequestMethod.POST)
+	@RequestMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-8", value = "/v1/properties.json", method = RequestMethod.POST)
 	public String addProperty(
 			@RequestParam(value = "county", required = true, defaultValue = "0") int county,
 			@RequestParam(value = "city", required = false, defaultValue = "0") int city,
@@ -225,7 +144,9 @@ public class EstateController {
 
 		String response = "";
 		Property property = new Property();
-		if (estateService.getCounty(county).equals(estateService.getCity(city))) {
+		System.out.println(county + " " + city + " "
+				+ estateService.getCity(city).getCounty().getId());
+		if (county == estateService.getCity(city).getCounty().getId()) {
 
 			property.setCountry(estateService.getCounty(county).getCountry());
 			property.setCounty(estateService.getCounty(county));
@@ -249,22 +170,17 @@ public class EstateController {
 			java.util.Date date = new java.util.Date();
 			property.setTimestamp(new Timestamp(date.getTime()));
 
-			estateService.addProperty(property);
-			response = "\"ok\"";
+			response = String.valueOf(estateService.addProperty(property));
+
 		} else {
 			response = "\"error\"";
 		}
 
 		map.put("data", response);
 
-		return "text";
+		return "plaintext";
 	}
 
-	/**
-	 * @param map
-	 * @param principal
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/notifications.json", method = RequestMethod.GET)
 	public String listNotification(Map<String, Object> map, Principal principal) {
 		map.put("data", estateService.listNotificationJson(principal.getName()));
@@ -272,12 +188,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param id
-	 * @param map
-	 * @param principal
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/notifications/{id}.json", method = RequestMethod.GET)
 	public String getNotification(@PathVariable("id") long id,
 			Map<String, Object> map, Principal principal) {
@@ -288,12 +198,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param id
-	 * @param map
-	 * @param principal
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/notifications/{id}.json", method = RequestMethod.POST)
 	public String setNotification(
 			@PathVariable("id") long id,
@@ -312,10 +216,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/cities.json", method = RequestMethod.GET)
 	public String listCity(Map<String, Object> map) {
 		map.put("data", estateService.listCityJson());
@@ -323,11 +223,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param id
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/cities/{id}.json", method = RequestMethod.GET)
 	public String getCity(@PathVariable("id") long id, Map<String, Object> map) {
 
@@ -336,10 +231,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/countries.json", method = RequestMethod.GET)
 	public String listCountries(Map<String, Object> map) {
 		map.put("data", estateService.listCountryJson());
@@ -347,12 +238,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param id
-	 * @param map
-	 * @param principal
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/countries/{id}.json", method = RequestMethod.GET)
 	public String getCountries(@PathVariable("id") long id,
 			Map<String, Object> map, Principal principal) {
@@ -362,10 +247,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/counties.json", method = RequestMethod.GET)
 	public String listCounties(Map<String, Object> map) {
 		map.put("data", estateService.listCountyJson());
@@ -373,11 +254,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param id
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/counties/{id}.json", method = RequestMethod.GET)
 	public String getCounties(@PathVariable("id") long id,
 			Map<String, Object> map) {
@@ -387,10 +263,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/heatings.json", method = RequestMethod.GET)
 	public String listHeatings(Map<String, Object> map) {
 		map.put("data", estateService.listHeatingJson());
@@ -398,11 +270,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param id
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/heatings/{id}.json", method = RequestMethod.GET)
 	public String getHeating(@PathVariable("id") long id,
 			Map<String, Object> map) {
@@ -412,10 +279,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/notificationtypes.json", method = RequestMethod.GET)
 	public String listNotificationTypes(Map<String, Object> map) {
 		map.put("data", estateService.listNotificationTypeJson());
@@ -423,11 +286,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param id
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/notificationtypes/{id}.json", method = RequestMethod.GET)
 	public String getNotificationType(@PathVariable("id") long id,
 			Map<String, Object> map) {
@@ -437,10 +295,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/offers.json", method = RequestMethod.GET)
 	public String listOffers(Map<String, Object> map) {
 		map.put("data", estateService.listOfferJson());
@@ -448,11 +302,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param id
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/offers/{id}.json", method = RequestMethod.GET)
 	public String getOffer(@PathVariable("id") long id, Map<String, Object> map) {
 
@@ -461,10 +310,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/parkings.json", method = RequestMethod.GET)
 	public String listParkings(Map<String, Object> map) {
 		map.put("data", estateService.listParkingJson());
@@ -472,11 +317,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param id
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/parking/{id}.json", method = RequestMethod.GET)
 	public String getParking(@PathVariable("id") long id,
 			Map<String, Object> map) {
@@ -486,10 +326,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/states.json", method = RequestMethod.GET)
 	public String listStates(Map<String, Object> map) {
 		map.put("data", estateService.listStateJson());
@@ -497,11 +333,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param id
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/states/{id}.json", method = RequestMethod.GET)
 	public String getState(@PathVariable("id") long id, Map<String, Object> map) {
 
@@ -510,10 +341,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/types.json", method = RequestMethod.GET)
 	public String listTypes(Map<String, Object> map) {
 		map.put("data", estateService.listTypeJson());
@@ -521,11 +348,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param id
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/types/{id}.json", method = RequestMethod.GET)
 	public String getType(@PathVariable("id") long id, Map<String, Object> map) {
 
@@ -534,12 +356,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param map
-	 * @param property
-	 * @param principal
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/comments.json", method = RequestMethod.GET)
 	public String listComments(
 			Map<String, Object> map,
@@ -551,20 +367,12 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param map
-	 * @param property
-	 * @param comment
-	 * @param comment_id
-	 * @param principal
-	 * @return
-	 */
 	@RequestMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-8", value = "/v1/comments.json", method = RequestMethod.POST)
 	public String addComment(
 			Map<String, Object> map,
 			@RequestParam(value = "property", required = true, defaultValue = "0") long property,
 			@RequestParam(value = "comment", required = true, defaultValue = "0") String comment,
-			@RequestParam(value = "comment_id", required = false, defaultValue = "0") long comment_id,
+			@RequestParam(value = "commentid", required = false, defaultValue = "0") long commentid,
 			Principal principal) {
 
 		String response = "";
@@ -573,7 +381,7 @@ public class EstateController {
 		mComment.setComment(comment);
 		mComment.setUser(estateService.getUser(principal.getName()));
 		mComment.setProperty(estateService.getProperty(property));
-		mComment.setCommentId(estateService.getComment(comment_id));
+		mComment.setCommentId(estateService.getComment(commentid));
 		java.util.Date date = new java.util.Date();
 		mComment.setTimestamp(new Timestamp(date.getTime()));
 
@@ -583,12 +391,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param id
-	 * @param map
-	 * @param principal
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/comments/{id}.json", method = RequestMethod.GET)
 	public String getComment(@PathVariable("id") long id,
 			Map<String, Object> map, Principal principal) {
@@ -598,18 +400,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/*
-	 * @RequestMapping("/v1/pictures/{propertyid}") public
-	 * ResponseEntity<byte[]> showPicture(@PathVariable long id) throws
-	 * IOException { InputStream in =
-	 * servletContext.getResourceAsStream("/pictures/10.jpg");
-	 * 
-	 * final HttpHeaders headers = new HttpHeaders();
-	 * headers.setContentType(MediaType.IMAGE_JPEG);
-	 * 
-	 * return new ResponseEntity<byte[]>(IOUtils.toByteArray(in), headers,
-	 * HttpStatus.CREATED); }
-	 */
 	@RequestMapping(value = "/v1/pictures/{propertyid}", method = RequestMethod.GET)
 	public String listPictureUrls(@PathVariable("propertyid") long propertyid,
 			Map<String, Object> map) {
@@ -619,11 +409,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param map
-	 * @param principal
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/favorites.json", method = RequestMethod.GET)
 	public String listFavorites(Map<String, Object> map, Principal principal) {
 		map.put("data", estateService.listFavoritesJson(principal.getName()));
@@ -631,12 +416,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param id
-	 * @param map
-	 * @param principal
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/favorites/{id}.json", method = RequestMethod.GET)
 	public String getFavorite(@PathVariable("id") long id,
 			Map<String, Object> map, Principal principal) {
@@ -646,12 +425,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param map
-	 * @param property
-	 * @param principal
-	 * @return
-	 */
 	@RequestMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-8", value = "/v1/favorites.json", method = RequestMethod.POST)
 	public String addFavorite(
 			Map<String, Object> map,
@@ -670,12 +443,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param map
-	 * @param property
-	 * @param principal
-	 * @return
-	 */
 	@RequestMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-8", value = "/v1/favorites/{id}.json", method = RequestMethod.POST)
 	public String deleteFavorite(Map<String, Object> map,
 			@PathVariable("id") int id, Principal principal) {
@@ -688,11 +455,6 @@ public class EstateController {
 		return "json";
 	}
 
-	/**
-	 * @param userName
-	 * @param map
-	 * @return
-	 */
 	@RequestMapping(value = "/v1/users/{userName}.json", method = RequestMethod.GET)
 	public String getUser(@PathVariable("userName") String userName,
 			Map<String, Object> map) {

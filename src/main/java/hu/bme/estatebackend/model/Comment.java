@@ -117,7 +117,7 @@ public class Comment {
 		return ("{ \"id\":" + id + ", \"user\": \"" + user.getName()
 				+ "\", \"property\": " + property.getId() + ", \"comment\": \""
 				+ comment + "\", \"timestamp\": \"" + timestamp
-				+ "\", \"comment_id\": " + comment_id + " }");
+				+ "\", \"commentId\": " + comment_id + " }");
 	}
 
 }

@@ -15,7 +15,15 @@ public class FavoritesDAOImpl implements FavoritesDAO {
 	private SessionFactory sessionFactory;
 
 	public void addFavorites(Favorites favorites) {
-		sessionFactory.getCurrentSession().save(favorites);
+		List<Favorites> f = (List<Favorites>) sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"select f from Favorites f Left Join f.user u where u.username = ? and f.property.id = ?")
+				.setString(0, favorites.getUser().getUsername())
+				.setLong(1, favorites.getProperty().getId()).list();
+		if (f.size() == 0) {
+			sessionFactory.getCurrentSession().save(favorites);
+		}
 	}
 
 	public List<Favorites> listFavorites(String userName) {

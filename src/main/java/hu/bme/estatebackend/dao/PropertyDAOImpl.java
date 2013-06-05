@@ -20,8 +20,9 @@ public class PropertyDAOImpl implements PropertyDAO {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	public void addProperty(Property property) {
+	public Integer addProperty(Property property) {
 		sessionFactory.getCurrentSession().saveOrUpdate(property);
+		return property.getId();
 	}
 
 	public List<Property> listProperty() {
@@ -138,7 +139,7 @@ public class PropertyDAOImpl implements PropertyDAO {
 		}
 
 		selectQuery += "ORDER BY p.timestamp DESC";
-		
+
 		Query query = sessionFactory.getCurrentSession()
 				.createQuery(selectQuery)
 				.setParameterList("elevators", elevators);
@@ -183,7 +184,8 @@ public class PropertyDAOImpl implements PropertyDAO {
 			}
 		}
 
-		List<Property> result = (List<Property>) query.setFirstResult(offset).setMaxResults(12).list();
+		List<Property> result = (List<Property>) query.setFirstResult(offset)
+				.setMaxResults(12).list();
 
 		return result;
 	}

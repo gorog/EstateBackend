@@ -103,8 +103,8 @@ public class EstateServiceImpl implements EstateService {
 	private RequestMappingHandlerMapping handlerMapping;
 
 	@Transactional
-	public void addProperty(Property property) {
-		propertyDAO.addProperty(property);
+	public Integer addProperty(Property property) {
+		return propertyDAO.addProperty(property);
 	}
 
 	@Transactional
